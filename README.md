@@ -27,3 +27,17 @@ manager.addPause(url1,file1)
 	.addPause(url2,file2)
 	.addPause(url3,file3);
 ```
+#### 4、 excute方法：执行所有任务。
+```java
+//通过execute方法，将之前添加的“下载”任务及“暂停”任务，一起批量处理。
+manager.execute(context);
+
+//例如
+manager.addLoad(url1,file1)
+	.addLoad(url2,file2)
+	.addPause(url3,file3)
+	.execute(context);
+	
+//上面代码执行的是“下载url1的网络文件到file1中，下载url2的网络文件到file2中，暂停url3的下载任务”。
+
+```
