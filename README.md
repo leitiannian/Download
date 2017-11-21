@@ -27,7 +27,7 @@ manager.addPause(url1,file1)
 	.addPause(url2,file2)
 	.addPause(url3,file3);
 ```
-#### 4、 excute方法：执行所有任务。
+#### 4、 execute方法：执行所有任务，调用execute之后会清空当前请求列表，下次就需要重新addLoad及addPause。
 ```java
 //通过execute方法，将之前添加的“下载”任务及“暂停”任务，一起批量处理。
 manager.execute(context);
