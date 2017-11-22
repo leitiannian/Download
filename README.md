@@ -1,5 +1,7 @@
 # 导入项目
-	compile 'org.hugh.loader:fileloader:1.0.0'
+```gradle
+compile 'org.hugh.loader:fileloader:1.0.0'
+```
 
 # 说明
 #### 工具只针对最简单的下载文件，以及暂停继续等处理。
