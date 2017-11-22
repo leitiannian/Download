@@ -1,6 +1,9 @@
 # 导入项目
 	compile 'org.hugh.loader:fileloader:1.0.0'
 
+# 说明
+### 工具只针对最简单的下载文件，以及暂停继续等处理。
+
 # 使用代码
 ### 说明：外部只需要使用 LoadManager 就可以创建、执行下载任务。
 #### 1、 获取 LoadManager 实例
