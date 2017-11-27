@@ -6,62 +6,62 @@
     android:padding="20dp">
 
     <TextView
-        android:id="@+id/text1"
+        android:id="@+id/wy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0/0" />
 
     <ProgressBar
-        android:id="@+id/progress1"
+        android:id="@+id/wy_pro"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="100" />
 
     <Button
-        android:id="@+id/download1"
+        android:id="@+id/wy_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="下载" />
 
 
     <TextView
-        android:id="@+id/text2"
+        android:id="@+id/wx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:text="0/0" />
 
     <ProgressBar
-        android:id="@+id/progress2"
+        android:id="@+id/wx_pro"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="100" />
 
     <Button
-        android:id="@+id/download2"
+        android:id="@+id/wx_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="下载" />
 
 
     <TextView
-        android:id="@+id/text3"
+        android:id="@+id/qq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:text="0/0" />
 
     <ProgressBar
-        android:id="@+id/progress3"
+        android:id="@+id/qq_pro"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="100" />
 
     <Button
-        android:id="@+id/download3"
+        android:id="@+id/qq_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="下载" />

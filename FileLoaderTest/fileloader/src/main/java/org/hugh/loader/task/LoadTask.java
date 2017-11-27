@@ -55,46 +55,47 @@ public class LoadTask implements Runnable {
         loadFile.filePath = info.file.getAbsolutePath();
         loadFile.downloadStatus = STATUS_PREPARE;
 
-        RandomAccessFile accessFile = null;
-        HttpURLConnection http = null;
-        InputStream inStream = null;
+        LoadFile fileInfo = holder.getFile(info.getId());
+        long mark = 0;
+        long fileSize = 0;
+        if (null != fileInfo && info.file.exists()) {
+            mark = fileInfo.downloadMark;
+            fileSize = fileInfo.size;
+            if (mark == 0) {
+                info.file.delete();
+            }
+        }
+        loadFile.size = fileSize;
+        loadFile.downloadMark = mark;
 
         //init intent.
         Intent intent = new Intent();
         intent.setAction(info.action);
+        intent.putExtra(DOWNLOAD_EXTRA, loadFile);
+        context.sendBroadcast(intent);
+
+        RandomAccessFile accessFile = null;
+        HttpURLConnection http = null;
+        InputStream inStream = null;
 
         try {
             URL sizeUrl = new URL(info.url);
             HttpURLConnection sizeHttp = (HttpURLConnection) sizeUrl.openConnection();
             sizeHttp.setRequestMethod("GET");
             sizeHttp.connect();
-            long size = sizeHttp.getContentLength();
+            long totalSize = sizeHttp.getContentLength();
             sizeHttp.disconnect();
 
-            if (size <= 0) {
+            if (totalSize <= 0) {
                 if (info.file.exists()) {
                     info.file.delete();
                 }
                 holder.deleteLoad(info.getId());
                 return;
             }
-
-            LoadFile fileInfo = holder.getFile(info.getId());
-            long mark = 0;
-            if (null != fileInfo && info.file.exists()) {
-                mark = fileInfo.downloadMark;
-                if (mark == 0) {
-                    info.file.delete();
-                }
-            }
-
+            loadFile.size = totalSize;
             accessFile = new RandomAccessFile(info.file, "rwd");
 
-            loadFile.size = size;
-
-            intent.putExtra(DOWNLOAD_EXTRA, loadFile);
-
-            context.sendBroadcast(intent);
             URL url = new URL(info.url);
             http = (HttpURLConnection) url.openConnection();
             http.setConnectTimeout(10000);

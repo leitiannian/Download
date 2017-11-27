@@ -61,7 +61,6 @@ public class LoadService extends Service {
                 }
             }
             canRequest = true;
-            return START_REDELIVER_INTENT;
         }
         return super.onStartCommand(intent, flags, startId);
     }
