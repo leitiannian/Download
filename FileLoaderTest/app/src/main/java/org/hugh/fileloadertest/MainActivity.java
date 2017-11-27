@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         float p1 = (float) (loadFile1.downloadMark * 1.0 / loadFile1.size);
                         int pro1 = (int) (p1 * 100);
-                        downloadText1.setText("图片1已下载" + "( " + pro1 + "% )");
+                        downloadText1.setText("网易云apk已下载" + "( " + pro1 + "% )");
                         progressBar1.setProgress(pro1);
                         Log.d("hugh", "路径" + loadFile1.filePath);
                         break;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         float p2 = (float) (loadFile2.downloadMark * 1.0 / loadFile2.size);
                         int pro2 = (int) (p2 * 100);
-                        downloadText2.setText("图片2已下载" + "( " + pro2 + "% )");
+                        downloadText2.setText("图片已下载" + "( " + pro2 + "% )");
                         progressBar2.setProgress(pro2);
                         break;
                     case "action_file3":
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         float p3 = (float) (loadFile3.downloadMark * 1.0 / loadFile3.size);
                         int pro3 = (int) (p3 * 100);
-                        downloadText3.setText("图片3已下载" + "( " + pro3 + "% )");
+                        downloadText3.setText("大图已下载" + "( " + pro3 + "% )");
                         progressBar3.setProgress(pro3);
                         break;
                 }
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
         //文件2
         final String url2 = "http://b.hiphotos.baidu.com/zhidao/pic/item/a8014c086e061d9583ac971e79f40ad162d9ca2a.jpg";
-        final File file2 = new File(getDir(), "图片1.jpg");
+        final File file2 = new File(getDir(), "图片.jpg");
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
                 } else if (loadFile.downloadStatus == Constant.STATUS_COMPLETE) {
 
-                    downloadText2.setText("图片1已下载" + "( " + 100 + "% )");
+                    downloadText2.setText("图片已下载" + "( " + 100 + "% )");
                     progressBar2.setProgress(100);
 
                 } else {
