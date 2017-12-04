@@ -1,6 +1,6 @@
 # 导入项目
 ```gradle
-compile 'org.hugh.loader:fileloader:1.0.0'
+compile 'org.hugh.loader:fileloader:1.0.3'
 ```
 
 # 说明
