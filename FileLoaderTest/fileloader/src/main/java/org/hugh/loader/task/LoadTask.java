@@ -36,9 +36,9 @@ public class LoadTask implements Runnable {
 
     private boolean isPause;
 
-    public LoadTask(Context context, LoadInfo info) {
+    public LoadTask(Context context, DBHolder holder, LoadInfo info) {
         this.context = context;
-        this.holder = new DBHolder(context);
+        this.holder = holder;
         this.info = info;
     }
 
@@ -58,10 +58,22 @@ public class LoadTask implements Runnable {
         LoadFile fileInfo = holder.getFile(info.getId());
         long mark = 0;
         long fileSize = 0;
-        if (null != fileInfo && info.file.exists()) {
+        if (null != fileInfo) {
             mark = fileInfo.downloadMark;
             fileSize = fileInfo.size;
             if (mark == 0) {
+                if (info.file.exists()) {
+                    info.file.delete();
+                }
+            } else {
+                if (!info.file.exists()) {
+                    holder.deleteLoad(info.getId());
+                    mark = 0;
+                    fileSize = 0;
+                }
+            }
+        } else {
+            if (info.file.exists()) {
                 info.file.delete();
             }
         }
@@ -150,6 +162,7 @@ public class LoadTask implements Runnable {
                 if (null != http) {
                     http.disconnect();
                 }
+                holder.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -157,6 +170,7 @@ public class LoadTask implements Runnable {
     }
 
     public void pause() {
+        holder.close();
         isPause = true;
     }
 

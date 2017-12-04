@@ -4,9 +4,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
+import org.hugh.loader.bean.LoadFile;
 import org.hugh.loader.bean.LoadInfo;
 import org.hugh.loader.bean.LoadRequest;
+import org.hugh.loader.database.DBHolder;
 import org.hugh.loader.manager.LoadExecutor;
 import org.hugh.loader.task.LoadTask;
 
@@ -16,7 +19,11 @@ import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import static org.hugh.loader.Constant.DOWNLOAD_EXTRA;
 import static org.hugh.loader.Constant.STATUS_COMPLETE;
+import static org.hugh.loader.Constant.STATUS_LOADING;
+import static org.hugh.loader.Constant.STATUS_PAUSE;
+import static org.hugh.loader.Constant.STATUS_PREPARE;
 
 
 /**
@@ -75,17 +82,41 @@ public class LoadService extends Service {
 
         //first,find the task by this id from the store list.
         LoadTask task = mTasks.get(loadInfo.getId());
+        DBHolder holder = new DBHolder(this);
+        LoadFile loadFile = holder.getFile(loadInfo.getId());
 
         if (null == task) {//if there is no task by this id from the store list,create a task.
+            //the file is downloading when quit the application.
+            if (null != loadFile) {
+                if (loadFile.downloadStatus == STATUS_LOADING || loadFile.downloadStatus == STATUS_PREPARE) {//correct the download state.
+                    holder.updateState(loadFile.id, STATUS_PAUSE);
+                } else if (loadFile.downloadStatus == STATUS_COMPLETE) {
+                    if (loadInfo.file.exists()) {//the download has finished.
+                        if (!TextUtils.isEmpty(loadInfo.action)) {
+                            Intent intent = new Intent();
+                            intent.setAction(loadInfo.action);
+                            intent.putExtra(DOWNLOAD_EXTRA, loadFile);
+                            sendBroadcast(intent);
+                        }
+                        return;
+                    } else {
+                        holder.deleteLoad(loadFile.id);
+                    }
+                }
+            }
+            //create a download task.
             if (request.dictate == LoadRequest.LOAD_REQUEST) {
-                task = new LoadTask(this, loadInfo);
+                task = new LoadTask(this, holder, loadInfo);
                 mTasks.put(loadInfo.getId(), task);
             }
         } else {
-            if (task.getStatus() == STATUS_COMPLETE && !loadInfo.file.exists()) {//if has download is finished,but you deleted the file.
-                mTasks.remove(loadInfo.getId());
-                executeDownload(request);
-                return;
+            if (task.getStatus() == STATUS_COMPLETE || task.getStatus() == STATUS_LOADING) {
+                if (!loadInfo.file.exists()) {
+                    task.pause();
+                    mTasks.remove(loadInfo.getId());
+                    executeDownload(request);
+                    return;
+                }
             }
         }
 

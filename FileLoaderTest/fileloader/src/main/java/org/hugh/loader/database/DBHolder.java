@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import org.hugh.loader.bean.LoadFile;
 
@@ -40,6 +41,15 @@ public class DBHolder {
         } else {
             mDatabase.insert(DBOpenHelper.TABLE_DOWNLOAD, null, values);
         }
+    }
+
+    public void updateState(String id, int state) {
+        if (TextUtils.isEmpty(id)) {
+            return;
+        }
+        ContentValues values = new ContentValues();
+        values.put("downloadStatus", state);
+        mDatabase.update(DBOpenHelper.TABLE_DOWNLOAD, values, "id = ?", new String[]{id});
     }
 
     /**
@@ -108,5 +118,9 @@ public class DBHolder {
         }
         cursor.close();
         return downloadFiles;
+    }
+
+    public void close() {
+        mDatabase.close();
     }
 }
