@@ -18,6 +18,7 @@ import org.hugh.loader.manager.LoadManager;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int STATUS_WAIT = 0;
     private static final int STATUS_LOADING = 1;
     private static final int STATUS_PAUSE = 2;
     private static final int STATUS_PREPARE = 3;
@@ -37,18 +38,21 @@ public class MainActivity extends AppCompatActivity {
             if (null != intent) {
                 switch (intent.getAction()) {
                     case "action_wy_download"://下载网易云apk
-                        LoadFile loadFile1 = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
-                        float wyPro = (float) (loadFile1.downloadMark * 1.0 / loadFile1.size);
+                        LoadFile wyFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
+                        float wyPro = (float) (wyFile.downloadMark * 1.0 / wyFile.size);
                         int wyProgress = (int) (wyPro * 100);
-                        float wyDownloadSize = loadFile1.downloadMark / 1024.0f / 1024;
-                        float wySize = loadFile1.size / 1024.0f / 1024;
-                        if (loadFile1.downloadStatus == Constant.STATUS_PREPARE) {
+                        float wyDownloadSize = wyFile.downloadMark / 1024.0f / 1024;
+                        float wySize = wyFile.size / 1024.0f / 1024;
+                        if (wyFile.downloadStatus == Constant.STATUS_WAIT) {
+                            mWYBtn.setText("等待下载");
+                            mWYBtn.setTag(STATUS_WAIT);
+                        }else if (wyFile.downloadStatus == Constant.STATUS_PREPARE) {
                             mWYBtn.setText("正在准备下载");
                             mWYBtn.setTag(STATUS_PREPARE);
-                        } else if (loadFile1.downloadStatus == Constant.STATUS_LOADING) {
+                        } else if (wyFile.downloadStatus == Constant.STATUS_LOADING) {
                             mWYBtn.setText("暂停");
                             mWYBtn.setTag(STATUS_LOADING);
-                        } else if (loadFile1.downloadStatus == Constant.STATUS_COMPLETE) {
+                        } else if (wyFile.downloadStatus == Constant.STATUS_COMPLETE) {
                             mWYBtn.setText("完成");
                             mWYBtn.setTag(STATUS_COMPLETE);
                         } else {
@@ -60,7 +64,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "action_wx_download"://下载微信apk
                         LoadFile wxFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
-                        if (wxFile.downloadStatus == Constant.STATUS_PREPARE) {
+                        if (wxFile.downloadStatus == Constant.STATUS_WAIT) {
+                            mWXBtn.setText("等待下载");
+                            mWXBtn.setTag(STATUS_WAIT);
+                        }else if (wxFile.downloadStatus == Constant.STATUS_PREPARE) {
                             mWXBtn.setText("正在准备下载");
                             mWXBtn.setTag(STATUS_PREPARE);
                         } else if (wxFile.downloadStatus == Constant.STATUS_LOADING) {
@@ -82,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "action_qq_download"://下载QQ apk
                         LoadFile qqFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
-                        if (qqFile.downloadStatus == Constant.STATUS_PREPARE) {
+                        if (qqFile.downloadStatus == Constant.STATUS_WAIT) {
+                            mQQBtn.setText("等待下载");
+                            mQQBtn.setTag(STATUS_WAIT);
+                        }else if (qqFile.downloadStatus == Constant.STATUS_PREPARE) {
                             mQQBtn.setText("正在准备下载");
                             mQQBtn.setTag(STATUS_PREPARE);
                         } else if (qqFile.downloadStatus == Constant.STATUS_LOADING) {

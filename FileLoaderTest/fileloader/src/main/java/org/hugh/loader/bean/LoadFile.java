@@ -7,6 +7,7 @@ import java.io.Serializable;
 import static org.hugh.loader.Constant.STATUS_FAIL;
 import static org.hugh.loader.Constant.STATUS_PAUSE;
 import static org.hugh.loader.Constant.STATUS_PREPARE;
+import static org.hugh.loader.Constant.STATUS_WAIT;
 
 
 /**
@@ -23,6 +24,6 @@ public class LoadFile implements Serializable {
     public String filePath;//download file path.
     public long size;//file size.
     public long downloadMark;//record download location.
-    @IntRange(from = STATUS_PREPARE, to = STATUS_FAIL)
+    @IntRange(from = STATUS_WAIT, to = STATUS_FAIL)
     public int downloadStatus = STATUS_PAUSE;//the status of the download information.
 }

@@ -21,6 +21,7 @@ import static org.hugh.loader.Constant.STATUS_FAIL;
 import static org.hugh.loader.Constant.STATUS_LOADING;
 import static org.hugh.loader.Constant.STATUS_PAUSE;
 import static org.hugh.loader.Constant.STATUS_PREPARE;
+import static org.hugh.loader.Constant.STATUS_WAIT;
 
 /**
  * @author hugh
@@ -29,32 +30,22 @@ import static org.hugh.loader.Constant.STATUS_PREPARE;
 
 public class LoadTask implements Runnable {
 
-    private Context context;
+    public Context context;
+    public LoadInfo info;
+    public LoadFile loadFile;
     private DBHolder holder;
-    private LoadInfo info;
-    private LoadFile loadFile;
-
     private boolean isPause;
 
     public LoadTask(Context context, DBHolder holder, LoadInfo info) {
         this.context = context;
         this.holder = holder;
         this.info = info;
-    }
 
-    @Override
-    public void run() {
-        call();
-    }
-
-    private void call() {
         //init downloadFile information.
         loadFile = new LoadFile();
         loadFile.id = info.getId();
         loadFile.downloadUrl = info.url;
         loadFile.filePath = info.file.getAbsolutePath();
-        loadFile.downloadStatus = STATUS_PREPARE;
-
         LoadFile fileInfo = holder.getFile(info.getId());
         long mark = 0;
         long fileSize = 0;
@@ -79,6 +70,15 @@ public class LoadTask implements Runnable {
         }
         loadFile.size = fileSize;
         loadFile.downloadMark = mark;
+    }
+
+    @Override
+    public void run() {
+        call();
+    }
+
+    private void call() {
+        loadFile.downloadStatus = STATUS_PREPARE;
 
         //init intent.
         Intent intent = new Intent();
@@ -113,14 +113,14 @@ public class LoadTask implements Runnable {
             http.setConnectTimeout(10000);
             http.setRequestProperty("Connection", "Keep-Alive");
             http.setReadTimeout(10000);
-            http.setRequestProperty("Range", "bytes=" + mark + "-");
+            http.setRequestProperty("Range", "bytes=" + loadFile.downloadMark + "-");
             http.connect();
 
             inStream = http.getInputStream();
             byte[] buffer = new byte[1024 * 8];
             int offset;
 
-            accessFile.seek(mark);
+            accessFile.seek(loadFile.downloadMark);
             long millis = SystemClock.uptimeMillis();
             while ((offset = inStream.read(buffer)) != -1) {
                 if (isPause) {
@@ -134,8 +134,7 @@ public class LoadTask implements Runnable {
                     return;
                 }
                 accessFile.write(buffer, 0, offset);
-                mark += offset;
-                loadFile.downloadMark = mark;
+                loadFile.downloadMark += offset;
                 loadFile.downloadStatus = STATUS_LOADING;
                 if (SystemClock.uptimeMillis() - millis >= 1000) {
                     millis = SystemClock.uptimeMillis();
@@ -172,7 +171,7 @@ public class LoadTask implements Runnable {
         isPause = true;
     }
 
-    @IntRange(from = STATUS_PREPARE, to = STATUS_FAIL)
+    @IntRange(from = STATUS_WAIT, to = STATUS_FAIL)
     public int getStatus() {
         if (null != loadFile) {
             return loadFile.downloadStatus;
