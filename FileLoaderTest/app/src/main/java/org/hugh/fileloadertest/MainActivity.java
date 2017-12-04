@@ -13,24 +13,24 @@ import android.widget.TextView;
 
 import org.hugh.loader.Constant;
 import org.hugh.loader.bean.LoadFile;
-import org.hugh.loader.database.DBHolder;
 import org.hugh.loader.manager.LoadManager;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int STATUS_LOADING = 1;
+    private static final int STATUS_PAUSE = 2;
+    private static final int STATUS_PREPARE = 3;
+    private static final int STATUS_COMPLETE = 4;
     private TextView mWYDownloadInfo;
     private TextView mWXDownloadInfo;
     private TextView mQQDownloadInfo;
-
     private ProgressBar mWYPro;
     private ProgressBar mWXPro;
     private ProgressBar mQQPro;
-
     private Button mWYBtn;
     private Button mWXBtn;
     private Button mQQBtn;
-
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -44,50 +44,62 @@ public class MainActivity extends AppCompatActivity {
                         float wySize = loadFile1.size / 1024.0f / 1024;
                         if (loadFile1.downloadStatus == Constant.STATUS_PREPARE) {
                             mWYBtn.setText("正在准备下载");
+                            mWYBtn.setTag(STATUS_PREPARE);
                         } else if (loadFile1.downloadStatus == Constant.STATUS_LOADING) {
                             mWYBtn.setText("暂停");
+                            mWYBtn.setTag(STATUS_LOADING);
                         } else if (loadFile1.downloadStatus == Constant.STATUS_COMPLETE) {
                             mWYBtn.setText("完成");
+                            mWYBtn.setTag(STATUS_COMPLETE);
                         } else {
                             mWYBtn.setText("下载");
+                            mWYBtn.setTag(STATUS_PAUSE);
                         }
-                        mWYDownloadInfo.setText("网易云apk已下载" + wyDownloadSize + "M/" + wySize + "M\n" + "( " + wyProgress + "% )");
+                        mWYDownloadInfo.setText("网易云apk已下载\n" + wyDownloadSize + "M/" + wySize + "M\n" + "( " + wyProgress + "% )");
                         mWYPro.setProgress(wyProgress);
                         break;
                     case "action_wx_download"://下载微信apk
                         LoadFile wxFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
                         if (wxFile.downloadStatus == Constant.STATUS_PREPARE) {
                             mWXBtn.setText("正在准备下载");
+                            mWXBtn.setTag(STATUS_PREPARE);
                         } else if (wxFile.downloadStatus == Constant.STATUS_LOADING) {
                             mWXBtn.setText("暂停");
+                            mWXBtn.setTag(STATUS_LOADING);
                         } else if (wxFile.downloadStatus == Constant.STATUS_COMPLETE) {
                             mWXBtn.setText("完成");
+                            mWXBtn.setTag(STATUS_COMPLETE);
                         } else {
                             mWXBtn.setText("下载");
+                            mWXBtn.setTag(STATUS_PAUSE);
                         }
                         float wxPro = (float) (wxFile.downloadMark * 1.0 / wxFile.size);
                         int wxProgress = (int) (wxPro * 100);
                         float wxDownloadSize = wxFile.downloadMark / 1024.0f / 1024;
                         float wxSize = wxFile.size / 1024.0f / 1024;
-                        mWXDownloadInfo.setText("微信已下载" + wxDownloadSize + "M/" + wxSize + "M\n" + "( " + wxProgress + "% )");
+                        mWXDownloadInfo.setText("微信已下载\n" + wxDownloadSize + "M/" + wxSize + "M\n" + "( " + wxProgress + "% )");
                         mWXPro.setProgress(wxProgress);
                         break;
                     case "action_qq_download"://下载QQ apk
                         LoadFile qqFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
                         if (qqFile.downloadStatus == Constant.STATUS_PREPARE) {
                             mQQBtn.setText("正在准备下载");
+                            mQQBtn.setTag(STATUS_PREPARE);
                         } else if (qqFile.downloadStatus == Constant.STATUS_LOADING) {
                             mQQBtn.setText("暂停");
+                            mQQBtn.setTag(STATUS_LOADING);
                         } else if (qqFile.downloadStatus == Constant.STATUS_COMPLETE) {
                             mQQBtn.setText("完成");
+                            mQQBtn.setTag(STATUS_COMPLETE);
                         } else {
                             mQQBtn.setText("下载");
+                            mQQBtn.setTag(STATUS_PAUSE);
                         }
                         float qqPro = (float) (qqFile.downloadMark * 1.0 / qqFile.size);
                         int qqProgress = (int) (qqPro * 100);
                         float qqDownloadSize = qqFile.downloadMark / 1024.0f / 1024;
                         float qqSize = qqFile.size / 1024.0f / 1024;
-                        mQQDownloadInfo.setText("QQ已下载" + qqDownloadSize + "M/" + qqSize + "M\n" + "( " + qqProgress + "% )");
+                        mQQDownloadInfo.setText("QQ已下载\n" + qqDownloadSize + "M/" + qqSize + "M\n" + "( " + qqProgress + "% )");
                         mQQPro.setProgress(qqProgress);
                         break;
                 }
@@ -115,12 +127,13 @@ public class MainActivity extends AppCompatActivity {
         mQQDownloadInfo = (TextView) findViewById(R.id.qq);
 
         mWYBtn = (Button) findViewById(R.id.wy_btn);
+        mWYBtn.setTag(STATUS_PAUSE);
         mWXBtn = (Button) findViewById(R.id.wx_btn);
+        mWXBtn.setTag(STATUS_PAUSE);
         mQQBtn = (Button) findViewById(R.id.qq_btn);
+        mQQBtn.setTag(STATUS_PAUSE);
 
         final LoadManager manager = LoadManager.getInstance();
-
-        final DBHolder holder = new DBHolder(this);
 
         //网易云
         final String WYUrl = "http://gdown.baidu.com/data/wisegame/e44001b8cb260aa5/wangyiyunyinle_103.apk";
@@ -128,31 +141,12 @@ public class MainActivity extends AppCompatActivity {
         mWYBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoadFile loadFile = holder.getFile(WYUrl + WYFile.getAbsolutePath());
-                if (null == loadFile) {
+                int status = (int) view.getTag();
+                if (status == STATUS_PAUSE) {
                     manager.addLoad(WYUrl, WYFile, "action_wy_download")
                             .execute(MainActivity.this);
-                    return;
-                }
-                if (loadFile.downloadStatus == Constant.STATUS_PAUSE || loadFile.downloadStatus == Constant.STATUS_FAIL) {
-                    manager.addLoad(WYUrl, WYFile, "action_wy_download")
-                            .execute(MainActivity.this);
-                } else if (loadFile.downloadStatus == Constant.STATUS_COMPLETE) {
-                    float downloadSize = loadFile.downloadMark / 1024.0f / 1024;
-                    float size = loadFile.size / 1024.0f / 1024;
-                    mWYDownloadInfo.setText("网易云apk已下载" + downloadSize + "M/" + size + "M\n" + "( " + 100 + "% )");
-                    mWYPro.setProgress(100);
-                }
-                if (loadFile.downloadStatus == Constant.STATUS_LOADING) {
-                    manager.addPause(WYUrl, WYFile)
-                            .execute(MainActivity.this);
-                } else if (loadFile.downloadStatus == Constant.STATUS_COMPLETE) {
-                    float downloadSize = loadFile.downloadMark / 1024.0f / 1024;
-                    float size = loadFile.size / 1024.0f / 1024;
-                    mWYDownloadInfo.setText("网易云apk已下载" + downloadSize + "M/" + size + "M\n" + "( " + 100 + "% )");
-                    mWYPro.setProgress(100);
                 } else {
-                    manager.addLoad(WYUrl, WYFile, "action_wy_download")
+                    manager.addPause(WYUrl, WYFile)
                             .execute(MainActivity.this);
                 }
             }
@@ -164,22 +158,12 @@ public class MainActivity extends AppCompatActivity {
         mWXBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoadFile loadFile = holder.getFile(WXUrl + WXFile.getAbsolutePath());
-                if (null == loadFile) {
+                int status = (int) view.getTag();
+                if (status == STATUS_PAUSE) {
                     manager.addLoad(WXUrl, WXFile, "action_wx_download")
                             .execute(MainActivity.this);
-                    return;
-                }
-                if (loadFile.downloadStatus == Constant.STATUS_LOADING) {
-                    manager.addPause(WXUrl, WXFile)
-                            .execute(MainActivity.this);
-                } else if (loadFile.downloadStatus == Constant.STATUS_COMPLETE) {
-                    float downloadSize = loadFile.downloadMark / 1024.0f / 1024;
-                    float size = loadFile.size / 1024.0f / 1024;
-                    mWXDownloadInfo.setText("微信已下载" + downloadSize + "M/" + size + "M\n" + "( " + 100 + "% )");
-                    mWXPro.setProgress(100);
                 } else {
-                    manager.addLoad(WXUrl, WXFile, "action_wx_download")
+                    manager.addPause(WXUrl, WXFile)
                             .execute(MainActivity.this);
                 }
             }
@@ -191,22 +175,12 @@ public class MainActivity extends AppCompatActivity {
         mQQBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LoadFile loadFile = holder.getFile(QQUrl + QQFile.getAbsolutePath());
-                if (null == loadFile) {
+                int status = (int) view.getTag();
+                if (status == STATUS_PAUSE) {
                     manager.addLoad(QQUrl, QQFile, "action_qq_download")
                             .execute(MainActivity.this);
-                    return;
-                }
-                if (loadFile.downloadStatus == Constant.STATUS_LOADING) {
-                    manager.addPause(QQUrl, QQFile)
-                            .execute(MainActivity.this);
-                } else if (loadFile.downloadStatus == Constant.STATUS_COMPLETE) {
-                    float downloadSize = loadFile.downloadMark / 1024.0f / 1024;
-                    float size = loadFile.size / 1024.0f / 1024;
-                    mQQDownloadInfo.setText("QQ已下载" + downloadSize + "M/" + size + "M\n" + "( " + 100 + "% )");
-                    mQQPro.setProgress(100);
                 } else {
-                    manager.addLoad(QQUrl, QQFile, "action_qq_download")
+                    manager.addPause(QQUrl, QQFile)
                             .execute(MainActivity.this);
                 }
             }

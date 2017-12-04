@@ -29,7 +29,7 @@
         android:id="@+id/wx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:text="0/0" />
 
     <ProgressBar
@@ -50,7 +50,7 @@
         android:id="@+id/qq"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:text="0/0" />
 
     <ProgressBar
