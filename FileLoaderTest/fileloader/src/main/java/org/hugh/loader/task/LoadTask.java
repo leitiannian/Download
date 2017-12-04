@@ -162,7 +162,6 @@ public class LoadTask implements Runnable {
                 if (null != http) {
                     http.disconnect();
                 }
-                holder.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -170,7 +169,6 @@ public class LoadTask implements Runnable {
     }
 
     public void pause() {
-        holder.close();
         isPause = true;
     }
 

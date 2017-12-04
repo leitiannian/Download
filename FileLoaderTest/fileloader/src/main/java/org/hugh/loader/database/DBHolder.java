@@ -120,7 +120,4 @@ public class DBHolder {
         return downloadFiles;
     }
 
-    public void close() {
-        mDatabase.close();
-    }
 }
