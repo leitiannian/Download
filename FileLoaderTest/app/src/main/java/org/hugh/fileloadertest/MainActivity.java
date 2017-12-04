@@ -134,6 +134,15 @@ public class MainActivity extends AppCompatActivity {
                             .execute(MainActivity.this);
                     return;
                 }
+                if (loadFile.downloadStatus == Constant.STATUS_PAUSE || loadFile.downloadStatus == Constant.STATUS_FAIL) {
+                    manager.addLoad(WYUrl, WYFile, "action_wy_download")
+                            .execute(MainActivity.this);
+                } else if (loadFile.downloadStatus == Constant.STATUS_COMPLETE) {
+                    float downloadSize = loadFile.downloadMark / 1024.0f / 1024;
+                    float size = loadFile.size / 1024.0f / 1024;
+                    mWYDownloadInfo.setText("网易云apk已下载" + downloadSize + "M/" + size + "M\n" + "( " + 100 + "% )");
+                    mWYPro.setProgress(100);
+                }
                 if (loadFile.downloadStatus == Constant.STATUS_LOADING) {
                     manager.addPause(WYUrl, WYFile)
                             .execute(MainActivity.this);
