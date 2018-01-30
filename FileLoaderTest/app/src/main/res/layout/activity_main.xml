@@ -5,13 +5,6 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <Button
-        android:id="@+id/wy_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="下载" />
-
-
     <TextView
         android:id="@+id/wx"
         android:layout_width="wrap_content"
