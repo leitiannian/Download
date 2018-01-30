@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     boolean readPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
                     boolean writePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-                    boolean cameraPermission = checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
                     ArrayList<String> permissions = new ArrayList<>();
                     boolean shouldCheck = false;
                     if (!readPermission) {
@@ -141,10 +140,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (!writePermission) {
                         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                        shouldCheck = true;
-                    }
-                    if (!cameraPermission) {
-                        permissions.add(Manifest.permission.CAMERA);
                         shouldCheck = true;
                     }
                     if (shouldCheck) {
@@ -166,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     boolean readPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
                     boolean writePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-                    boolean cameraPermission = checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
                     ArrayList<String> permissions = new ArrayList<>();
                     boolean shouldCheck = false;
                     if (!readPermission) {
@@ -175,10 +169,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if (!writePermission) {
                         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                        shouldCheck = true;
-                    }
-                    if (!cameraPermission) {
-                        permissions.add(Manifest.permission.CAMERA);
                         shouldCheck = true;
                     }
                     if (shouldCheck) {
