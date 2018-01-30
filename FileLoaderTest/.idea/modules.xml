@@ -3,8 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FileLoaderTest.iml" filepath="$PROJECT_DIR$/FileLoaderTest.iml" />
+      <module fileurl="file://D:\android\github\Download\FileLoaderTest\FileLoaderTest.iml" filepath="D:\android\github\Download\FileLoaderTest\FileLoaderTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\android\github\Download\FileLoaderTest\app\app.iml" filepath="D:\android\github\Download\FileLoaderTest\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/fileloader/fileloader.iml" filepath="$PROJECT_DIR$/fileloader/fileloader.iml" />
+      <module fileurl="file://D:\android\github\Download\FileLoaderTest\fileloader\fileloader.iml" filepath="D:\android\github\Download\FileLoaderTest\fileloader\fileloader.iml" />
     </modules>
   </component>
 </project>

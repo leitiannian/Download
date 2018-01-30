@@ -1,73 +1,56 @@
 package org.hugh.fileloadertest;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.hugh.loader.Constant;
 import org.hugh.loader.bean.LoadFile;
 import org.hugh.loader.manager.LoadManager;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_PERMISSION_FOR_QQ = 0x101;
+    private static final int REQUEST_PERMISSION_FOR_WX = 0x102;
     private static final int STATUS_WAIT = 0;
     private static final int STATUS_LOADING = 1;
     private static final int STATUS_PAUSE = 2;
     private static final int STATUS_PREPARE = 3;
     private static final int STATUS_COMPLETE = 4;
-    private TextView mWYDownloadInfo;
+    private LoadManager manager;
     private TextView mWXDownloadInfo;
     private TextView mQQDownloadInfo;
-    private ProgressBar mWYPro;
     private ProgressBar mWXPro;
     private ProgressBar mQQPro;
-    private Button mWYBtn;
     private Button mWXBtn;
     private Button mQQBtn;
+    private int mQQStatus;
+    private int mWXStatus;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (null != intent) {
                 switch (intent.getAction()) {
-                    case "action_wy_download"://下载网易云apk
-                        LoadFile wyFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
-                        float wyPro = (float) (wyFile.downloadMark * 1.0 / wyFile.size);
-                        int wyProgress = (int) (wyPro * 100);
-                        float wyDownloadSize = wyFile.downloadMark / 1024.0f / 1024;
-                        float wySize = wyFile.size / 1024.0f / 1024;
-                        if (wyFile.downloadStatus == Constant.STATUS_WAIT) {
-                            mWYBtn.setText("等待下载");
-                            mWYBtn.setTag(STATUS_WAIT);
-                        }else if (wyFile.downloadStatus == Constant.STATUS_PREPARE) {
-                            mWYBtn.setText("正在准备下载");
-                            mWYBtn.setTag(STATUS_PREPARE);
-                        } else if (wyFile.downloadStatus == Constant.STATUS_LOADING) {
-                            mWYBtn.setText("暂停");
-                            mWYBtn.setTag(STATUS_LOADING);
-                        } else if (wyFile.downloadStatus == Constant.STATUS_COMPLETE) {
-                            mWYBtn.setText("完成");
-                            mWYBtn.setTag(STATUS_COMPLETE);
-                        } else {
-                            mWYBtn.setText("下载");
-                            mWYBtn.setTag(STATUS_PAUSE);
-                        }
-                        mWYDownloadInfo.setText("网易云apk已下载\n" + wyDownloadSize + "M/" + wySize + "M\n" + "( " + wyProgress + "% )");
-                        mWYPro.setProgress(wyProgress);
-                        break;
                     case "action_wx_download"://下载微信apk
                         LoadFile wxFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
                         if (wxFile.downloadStatus == Constant.STATUS_WAIT) {
                             mWXBtn.setText("等待下载");
                             mWXBtn.setTag(STATUS_WAIT);
-                        }else if (wxFile.downloadStatus == Constant.STATUS_PREPARE) {
+                        } else if (wxFile.downloadStatus == Constant.STATUS_PREPARE) {
                             mWXBtn.setText("正在准备下载");
                             mWXBtn.setTag(STATUS_PREPARE);
                         } else if (wxFile.downloadStatus == Constant.STATUS_LOADING) {
@@ -92,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                         if (qqFile.downloadStatus == Constant.STATUS_WAIT) {
                             mQQBtn.setText("等待下载");
                             mQQBtn.setTag(STATUS_WAIT);
-                        }else if (qqFile.downloadStatus == Constant.STATUS_PREPARE) {
+                        } else if (qqFile.downloadStatus == Constant.STATUS_PREPARE) {
                             mQQBtn.setText("正在准备下载");
                             mQQBtn.setTag(STATUS_PREPARE);
                         } else if (qqFile.downloadStatus == Constant.STATUS_LOADING) {
@@ -128,73 +111,110 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction("action_qq_download");
         registerReceiver(receiver, filter);
 
-        mWYPro = (ProgressBar) findViewById(R.id.wy_pro);
         mWXPro = (ProgressBar) findViewById(R.id.wx_pro);
         mQQPro = (ProgressBar) findViewById(R.id.qq_pro);
 
-        mWYDownloadInfo = (TextView) findViewById(R.id.wy);
         mWXDownloadInfo = (TextView) findViewById(R.id.wx);
         mQQDownloadInfo = (TextView) findViewById(R.id.qq);
 
-        mWYBtn = (Button) findViewById(R.id.wy_btn);
-        mWYBtn.setTag(STATUS_PAUSE);
         mWXBtn = (Button) findViewById(R.id.wx_btn);
-        mWXBtn.setTag(STATUS_PAUSE);
+        mWXBtn.setTag(mWXStatus = STATUS_PAUSE);
         mQQBtn = (Button) findViewById(R.id.qq_btn);
-        mQQBtn.setTag(STATUS_PAUSE);
+        mQQBtn.setTag(mQQStatus = STATUS_PAUSE);
 
-        final LoadManager manager = LoadManager.getInstance();
-
-        //网易云
-        final String WYUrl = "http://gdown.baidu.com/data/wisegame/e44001b8cb260aa5/wangyiyunyinle_103.apk";
-        final File WYFile = new File(getDir(), "网易云.apk");
-        mWYBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int status = (int) view.getTag();
-                if (status == STATUS_PAUSE) {
-                    manager.addLoad(WYUrl, WYFile, "action_wy_download")
-                            .execute(MainActivity.this);
-                } else {
-                    manager.addPause(WYUrl, WYFile)
-                            .execute(MainActivity.this);
-                }
-            }
-        });
+        manager = LoadManager.getInstance();
 
         //微信
-        final String WXUrl = "http://gdown.baidu.com/data/wisegame/db931ac9ff9e61a9/weixin_1140.apk";
-        final File WXFile = new File(getDir(), "微信.apk");
         mWXBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int status = (int) view.getTag();
-                if (status == STATUS_PAUSE) {
-                    manager.addLoad(WXUrl, WXFile, "action_wx_download")
-                            .execute(MainActivity.this);
-                } else {
-                    manager.addPause(WXUrl, WXFile)
-                            .execute(MainActivity.this);
+                mWXStatus = (int) view.getTag();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    boolean readPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    boolean writePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    boolean cameraPermission = checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+                    ArrayList<String> permissions = new ArrayList<>();
+                    boolean shouldCheck = false;
+                    if (!readPermission) {
+                        permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+                        shouldCheck = true;
+                    }
+                    if (!writePermission) {
+                        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        shouldCheck = true;
+                    }
+                    if (!cameraPermission) {
+                        permissions.add(Manifest.permission.CAMERA);
+                        shouldCheck = true;
+                    }
+                    if (shouldCheck) {
+                        String[] per = new String[permissions.size()];
+                        permissions.toArray(per);
+                        requestPermissions(per, REQUEST_PERMISSION_FOR_WX);
+                        return;
+                    }
                 }
+                executeWX();
             }
         });
 
         //QQ
-        final String QQUrl = "http://gdown.baidu.com/data/wisegame/f28ba370126f3605/QQ_744.apk";
-        final File QQFile = new File(getDir(), "QQ.apk");
         mQQBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int status = (int) view.getTag();
-                if (status == STATUS_PAUSE) {
-                    manager.addLoad(QQUrl, QQFile, "action_qq_download")
-                            .execute(MainActivity.this);
-                } else {
-                    manager.addPause(QQUrl, QQFile)
-                            .execute(MainActivity.this);
+                mQQStatus = (int) view.getTag();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    boolean readPermission = checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    boolean writePermission = checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    boolean cameraPermission = checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+                    ArrayList<String> permissions = new ArrayList<>();
+                    boolean shouldCheck = false;
+                    if (!readPermission) {
+                        permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+                        shouldCheck = true;
+                    }
+                    if (!writePermission) {
+                        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        shouldCheck = true;
+                    }
+                    if (!cameraPermission) {
+                        permissions.add(Manifest.permission.CAMERA);
+                        shouldCheck = true;
+                    }
+                    if (shouldCheck) {
+                        String[] per = new String[permissions.size()];
+                        permissions.toArray(per);
+                        requestPermissions(per, REQUEST_PERMISSION_FOR_QQ);
+                        return;
+                    }
                 }
+                executeQQ();
             }
         });
+    }
+
+    private void executeWX() {
+        String WXUrl = "http://gdown.baidu.com/data/wisegame/db931ac9ff9e61a9/weixin_1140.apk";
+        File WXFile = new File(getDir(), "微信.apk");
+        if (mWXStatus == STATUS_PAUSE) {
+            manager.addLoad(WXUrl, WXFile, "action_wx_download")
+                    .execute(MainActivity.this);
+        } else {
+            manager.addPause(WXUrl, WXFile)
+                    .execute(MainActivity.this);
+        }
+    }
+
+    private void executeQQ() {
+        String QQUrl = "http://gdown.baidu.com/data/wisegame/f28ba370126f3605/QQ_744.apk";
+        File QQFile = new File(getDir(), "QQ.apk");
+        if (mQQStatus == STATUS_PAUSE) {
+            manager.addLoad(QQUrl, QQFile, "action_qq_download")
+                    .execute(MainActivity.this);
+        } else {
+            manager.addPause(QQUrl, QQFile)
+                    .execute(MainActivity.this);
+        }
     }
 
     private File getDir() {
@@ -209,5 +229,38 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_PERMISSION_FOR_QQ:
+                boolean hasPermission2QQ = true;
+                for (int i = 0; i < permissions.length; i++) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        hasPermission2QQ = false;
+                    }
+                }
+                if (!hasPermission2QQ) {
+                    Toast.makeText(this, "下载文件需要读写权限", Toast.LENGTH_SHORT).show();
+                } else {
+                    executeQQ();
+                }
+                break;
+            case REQUEST_PERMISSION_FOR_WX:
+                boolean hasPermission2wx = true;
+                for (int i = 0; i < permissions.length; i++) {
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                        hasPermission2wx = false;
+                    }
+                }
+                if (!hasPermission2wx) {
+                    Toast.makeText(this, "下载文件需要读写权限", Toast.LENGTH_SHORT).show();
+                } else {
+                    executeWX();
+                }
+                break;
+        }
     }
 }
