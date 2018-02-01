@@ -12,7 +12,7 @@ compile 'org.hugh.loader:fileloader:1.0.3'
 > * 可以指定最多几个下载同时执行。
 
 ## 代码使用
-> 在项目的Application中配置“最多n个下载任务同时执行”，其他的下载任务则在队列之中。
+> * 在项目的Application中配置“最多n个下载任务同时执行”，其他的下载任务则在队列之中。
 ```java
 public class App extends Application {
     @Override
@@ -22,69 +22,30 @@ public class App extends Application {
     }
 }
 ```
-> 在执行下载之前，先要获取LoadManager实例：
+> * 在执行下载之前，先要获取LoadManager实例：
 ```java
 LoadManager manager = LoadManager.getInstance();
 ```
-> 添加下载任务(下载任务以“url + file.getAbsolutePath()”作为唯一标识id)：
+> * 添加下载任务(下载任务以“url + file.getAbsolutePath()”作为唯一标识id)：
 ```java
 manager.addLoad(url, file);//url为下载地址，file为本地下载文件用于接收网络文件
        .addLoad(url2, file2, action);//action为及时接收下载信息的广播action
 ```
-> 添加暂停任务：
+> * 添加暂停任务：
 ```java
 manager.addPause(url, file);//url为下载地址，file为本地下载文件用于接收网络文件
        .addPause(url2, file2, action);//action为及时接收下载信息的广播action
 ```
-> 执行下载任务队列：
+> * 执行下载任务队列：
 ```java
 manager.execute(context);
 ```
 
 ```java
-你也可以一起执行
+//你也可以一起执行
 manager.addLoad(url, file);
        .addLoad(url2, file2, action2)
        .addPause(url3, file3);
        .addPause(url4, file4, action3)
        .execute(context);
-```
-
-#### 1、 获取 LoadManager 实例
-```java
-LoadManager manager = LoadManager.getInstance();
-```
-#### 2、 addLoad方法：添加一条“下载”任务。任务以“url+文件绝对路径”作为唯一标识。
-```java
-//添加一条下载任务
-manager.addLoad(url,file);
-
-//添加多条下载任务
-manager.addLoad(url1,file1)
-	.addLoad(url2,file2)
-	.addLoad(url3,file3);
-```
-#### 3、 addPause方法：添加一条“暂停”任务。
-```java
-//添加一条暂停任务
-manager.addPause(url,file);
-
-//添加多条暂停任务
-manager.addPause(url1,file1)
-	.addPause(url2,file2)
-	.addPause(url3,file3);
-```
-#### 4、 execute方法：执行所有任务，调用execute之后会清空当前请求列表，下次就需要重新addLoad及addPause。
-```java
-//通过execute方法，将之前添加的“下载”任务及“暂停”任务，一起批量处理。
-manager.execute(context);
-
-//例如
-manager.addLoad(url1,file1)
-	.addLoad(url2,file2)
-	.addPause(url3,file3)
-	.execute(context);
-	
-//上面代码执行的是“下载url1的网络文件到file1中，下载url2的网络文件到file2中，暂停url3的下载任务”。
-
 ```
