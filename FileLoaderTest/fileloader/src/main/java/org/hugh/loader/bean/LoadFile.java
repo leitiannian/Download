@@ -6,7 +6,6 @@ import java.io.Serializable;
 
 import static org.hugh.loader.Constant.STATUS_FAIL;
 import static org.hugh.loader.Constant.STATUS_PAUSE;
-import static org.hugh.loader.Constant.STATUS_PREPARE;
 import static org.hugh.loader.Constant.STATUS_WAIT;
 
 

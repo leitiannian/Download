@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @author hugh
  * @since 2017/11/21 14:28
  */
-
+@SuppressWarnings("unused")
 public class LoadManager {
     private static LoadManager sManager;
     private static ArrayList<LoadRequest> requests = new ArrayList<>();
@@ -34,6 +34,11 @@ public class LoadManager {
         return sManager;
     }
 
+    /**
+     * 执行所有任务
+     *
+     * @param context 运行环境
+     */
     public synchronized void execute(Context context) {
         if (requests.isEmpty()) {
             return;
@@ -44,20 +49,50 @@ public class LoadManager {
         requests.clear();
     }
 
+    /**
+     * 向队列里添加一条 下载 任务
+     *
+     * @param url  下载地址
+     * @param file 下载的本地文件
+     * @return 建造者模式，用于链式调用
+     */
     public LoadManager addLoad(String url, File file) {
         return addLoad(url, file, null);
     }
 
+    /**
+     * 向队列里添加一条 下载 任务，并且指定接收信息的广播action
+     *
+     * @param url    下载地址
+     * @param file   下载的本地文件
+     * @param action 接收信息的广播action
+     * @return 建造者模式，用于链式调用
+     */
     public LoadManager addLoad(String url, File file, String action) {
         requests.add(newRequest(url, file, action, LoadRequest.LOAD_REQUEST));
         return this;
     }
 
+    /**
+     * 向队列里添加一条 暂停 任务
+     *
+     * @param url  下载地址
+     * @param file 下载的本地文件
+     * @return 建造者模式，用于链式调用
+     */
     public LoadManager addPause(String url, File file) {
         addPause(url, file, null);
         return this;
     }
 
+    /**
+     * 向队列里添加一条 暂停 任务，并且指定接收信息的广播action
+     *
+     * @param url    下载地址
+     * @param file   下载的本地文件
+     * @param action 接收信息的广播action
+     * @return 建造者模式，用于链式调用
+     */
     public LoadManager addPause(String url, File file, String action) {
         requests.add(newRequest(url, file, action, LoadRequest.PAUSE_REQUEST));
         return this;
