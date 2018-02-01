@@ -6,7 +6,8 @@ compile 'org.hugh.loader:fileloader:1.0.3'
 ![断点下载的使用效果](https://github.com/hy-freedom/pic/raw/master/Download.gif)
 
 ## 说明
-> * 主要提供LoadManager给外部管理下载任务https://github.com/hy-freedom/Download/blob/master/FileLoaderTest/fileloader/src/main/java/org/hugh/loader/manager/LoadManager.java
+> * 主要提供LoadManager给外部管理下载任务。
+https://github.com/hy-freedom/Download/blob/master/FileLoaderTest/fileloader/src/main/java/org/hugh/loader/manager/LoadManager.java
 
 
 ## 使用代码
