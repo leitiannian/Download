@@ -6,7 +6,7 @@ compile 'org.hugh.loader:fileloader:1.0.3'
 ![断点下载的使用效果](https://github.com/hy-freedom/pic/raw/master/Download.gif)
 
 ## 说明
-#### 工具只针对最简单的下载文件，以及暂停继续等处理。
+> * 主要提供LoadManager给外部管理下载任务https://github.com/hy-freedom/Download/blob/master/FileLoaderTest/fileloader/src/main/java/org/hugh/loader/manager/LoadManager.java
 
 
 ## 使用代码
