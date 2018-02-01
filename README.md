@@ -3,7 +3,7 @@
 compile 'org.hugh.loader:fileloader:1.0.3'
 ```
 ## 效果图
-![断点下载的使用效果](https://github.com/hy-freedom/pic/raw/master/断点下载.gif)
+![断点下载的使用效果](https://github.com/hy-freedom/pic/raw/master/Download.gif)
 
 ## 说明
 #### 工具只针对最简单的下载文件，以及暂停继续等处理。
