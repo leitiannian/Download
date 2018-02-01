@@ -39,9 +39,15 @@ manager.addPause(url, file);//url为下载地址，file为本地下载文件用�
 > 执行下载任务队列：
 ```java
 manager.execute(context);
+```
 
+```java
 你也可以一起执行
-
+manager.addLoad(url, file);
+       .addLoad(url2, file2, action2)
+       .addPause(url3, file3);
+       .addPause(url4, file4, action3)
+       .execute(context);
 ```
 
 #### 1、 获取 LoadManager 实例
