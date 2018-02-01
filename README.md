@@ -40,7 +40,8 @@ manager.addPause(url, file);//url为下载地址，file为本地下载文件用�
 ```java
 manager.execute(context);
 
-你也可以
+你也可以一起执行
+
 ```
 
 #### 1、 获取 LoadManager 实例
