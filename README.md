@@ -6,6 +6,7 @@ compile 'org.hugh.loader:fileloader:1.0.3'
 ![断点下载的使用效果](https://github.com/hy-freedom/pic/raw/master/Download.gif)
 
 ## 说明
+> * 代码非常简单。
 > * 主要提供[LoadManager](https://github.com/hy-freedom/Download/blob/master/FileLoaderTest/fileloader/src/main/java/org/hugh/loader/manager/LoadManager.java)给外部管理下载任务。
 > * 支持多任务的断点下载。
 > * 下载过程的信息接收使用广播发送，在执行下载的时候可以指定广播的action（可以在静态注册的广播中接收下载信息并且自己编写Notification在通知栏展示下载进度给用户）。
