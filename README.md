@@ -1,13 +1,15 @@
-# 导入项目
+## 导入项目
 ```gradle
 compile 'org.hugh.loader:fileloader:1.0.3'
 ```
+## 效果图
+![断点下载的使用效果](https://github.com/hy-freedom/pic/raw/master/Download.gif)
 
-# 说明
-#### 工具只针对最简单的下载文件，以及暂停继续等处理。
+## 说明
+> * 主要提供[LoadManager](https://github.com/hy-freedom/Download/blob/master/FileLoaderTest/fileloader/src/main/java/org/hugh/loader/manager/LoadManager.java)给外部管理下载任务。
 
 
-# 使用代码
+## 使用代码
 ### 说明：外部只需要使用 LoadManager 就可以创建、执行下载任务。
 #### 1、 获取 LoadManager 实例
 ```java
