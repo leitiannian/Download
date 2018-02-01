@@ -11,7 +11,17 @@ compile 'org.hugh.loader:fileloader:1.0.3'
 > * 下载过程的信息接收使用广播发送，在执行下载的时候可以指定广播的action（可以在静态注册的广播中接收下载信息并且自己编写Notification在通知栏展示下载进度给用户）。
 > * 可以指定最多几个下载同时执行。
 
-## 使用代码
+## 代码使用
+> 在项目的Application中配置“最多n个下载任务同时执行”，其他的下载任务则在队列之中。
+```java
+public class App extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        LoadManager.MAX_CONCURRENCY_COUNT = 3;//指定最多3个下载任务同时执行
+    }
+}
+```
 ### 说明：外部只需要使用 LoadManager 就可以创建、执行下载任务。
 #### 1、 获取 LoadManager 实例
 ```java
