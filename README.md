@@ -22,7 +22,21 @@ public class App extends Application {
     }
 }
 ```
-### 说明：外部只需要使用 LoadManager 就可以创建、执行下载任务。
+> 在执行下载之前，先要获取LoadManager实例：
+```java
+LoadManager manager = LoadManager.getInstance();
+```
+> 下载任务以“url + file.getAbsolutePath()”作为唯一标识id。
+> * 添加下载任务：
+```java
+manager.addLoad(url, file);//url为下载地址，file为本地下载文件用于接收网络文件
+       .addLoad(url2, file2, action);//action为及时接收下载信息的广播action
+```
+> * 添加暂停任务：
+```java
+manager.addPause(url, file);//url为下载地址，file为本地下载文件用于接收网络文件
+       .addPause(url2, file2, action);//action为及时接收下载信息的广播action
+```
 #### 1、 获取 LoadManager 实例
 ```java
 LoadManager manager = LoadManager.getInstance();
