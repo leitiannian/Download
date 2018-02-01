@@ -16,6 +16,7 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("unused")
 public class LoadManager {
+    public static int MAX_CONCURRENCY_COUNT = 0;
     private static LoadManager sManager;
     private static ArrayList<LoadRequest> requests = new ArrayList<>();
 

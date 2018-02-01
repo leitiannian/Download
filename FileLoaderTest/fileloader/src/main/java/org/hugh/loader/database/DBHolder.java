@@ -17,11 +17,9 @@ import java.util.ArrayList;
  */
 
 public class DBHolder {
-    public Context context;
     private SQLiteDatabase mDatabase;
 
     public DBHolder(Context context) {
-        this.context = context;
         mDatabase = new DBOpenHelper(context).getWritableDatabase();
     }
 
@@ -99,6 +97,7 @@ public class DBHolder {
         return has;
     }
 
+    @SuppressWarnings("unused")
     public ArrayList<LoadFile> getFiles(String url) {
         ArrayList<LoadFile> downloadFiles = new ArrayList<>();
         Cursor cursor = mDatabase.query(DBOpenHelper.TABLE_DOWNLOAD, null,

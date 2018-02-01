@@ -11,8 +11,11 @@ import org.hugh.loader.bean.LoadInfo;
 import org.hugh.loader.bean.LoadRequest;
 import org.hugh.loader.database.DBHolder;
 import org.hugh.loader.manager.LoadExecutor;
+import org.hugh.loader.manager.LoadManager;
 import org.hugh.loader.task.LoadTask;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +38,51 @@ import static org.hugh.loader.Constant.STATUS_PREPARE;
 
 public class LoadService extends Service {
     public static final String REQUESTS = "requests";
-    public static boolean canRequest = true;
+    private static final int DEVICE_INFO_UNKNOWN = -1;
+    private static final FileFilter CPU_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(File pathname) {
+            String path = pathname.getName();
+            if (path.startsWith("cpu")) {
+                for (int i = 3; i < path.length(); i++) {
+                    if (path.charAt(i) < '0' || path.charAt(i) > '9') {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+    };
+    private static int MAX_CONCURRENCY_COUNT = LoadManager.MAX_CONCURRENCY_COUNT;
+    private static LoadExecutor sExecutor;//executor
 
-    private LoadExecutor mExecutor = new LoadExecutor(3, 3,
-            0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<Runnable>());//executor
+    static {
+        if (MAX_CONCURRENCY_COUNT <= 0) {
+            int cupCores = getNumberOfCPUCores();
+            MAX_CONCURRENCY_COUNT = (DEVICE_INFO_UNKNOWN == cupCores) ? 3 : cupCores;
+        }
+        sExecutor = new LoadExecutor(
+                MAX_CONCURRENCY_COUNT,
+                MAX_CONCURRENCY_COUNT,
+                100L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>());//executor
+    }
+
+    private boolean canRequest = true;
     private Map<String, LoadTask> mTasks = new HashMap<>();//store task.
+
+    private static int getNumberOfCPUCores() {
+        int cores;
+        try {
+            cores = new File("/sys/devices/system/cpu/").listFiles(CPU_FILTER).length;
+        } catch (SecurityException e) {
+            cores = DEVICE_INFO_UNKNOWN;
+        } catch (NullPointerException e) {
+            cores = DEVICE_INFO_UNKNOWN;
+        }
+        return cores;
+    }
 
     @Nullable
     @Override
@@ -122,7 +164,7 @@ public class LoadService extends Service {
 
         if (null != task) {
             if (request.dictate == LoadRequest.LOAD_REQUEST) {
-                mExecutor.executeTask(task);
+                sExecutor.executeTask(task);
             } else {
                 task.pause();
             }
