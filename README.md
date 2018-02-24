@@ -50,7 +50,7 @@ manager.addLoad(url, file);
        .addPause(url4, file4, action3)
        .execute(context);
 ```
-> 广播接收：
+## 下载状态接收
 ```java
 private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
