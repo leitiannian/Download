@@ -55,37 +55,41 @@ manager.addLoad(url, file);
 private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (null != intent && null != intent.getAction()) {
-                switch (intent.getAction()) {
-                    case LOAD_ACTION:
-                        LoadFile loadFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
+            if (null == intent || null == intent.getAction()) {
+                return;
+            }
+            
+            switch (intent.getAction()) {
+                case LOAD_ACTION://不同的下载应该使用不同的action接收
+                    LoadFile loadFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
+                    if (null == loadFile) {
+                        return;
+                    }
+                    int status = loadFile.downloadStatus;//文件的下载状态
+                    long fileSize = loadFile.size;//文件总大小
+                    long loadedSize = loadFile.downloadMark;//已下载了多大
+                    String id = loadFile.id;//数据库中此文件的id
+                    String url = loadFile.downloadUrl;//文件的网络url
+                    String path = loadFile.filePath;//文件下载的手机本地路径
 
-                        int status = loadFile.downloadStatus;//文件的下载状态
-                        long fileSize = loadFile.size;//文件总大小
-                        long loadedSize = loadFile.downloadMark;//已下载了多大
-                        String id = loadFile.id;//数据库中此文件的id
-                        String url = loadFile.downloadUrl;//文件的网络url
-                        String path = loadFile.filePath;//文件下载的手机本地路径
+                    switch (status) {
+                        case Constant.STATUS_WAIT://等待下载
 
-                        switch (status) {
-                            case Constant.STATUS_WAIT://等待下载
+                            break;
+                        case Constant.STATUS_PREPARE://正在准备下载
 
-                                break;
-                            case Constant.STATUS_PREPARE://正在准备下载
+                            break;
+                        case Constant.STATUS_LOADING://正在下载中...
 
-                                break;
-                            case Constant.STATUS_LOADING://正在下载中...
+                            break;
+                        case Constant.STATUS_COMPLETE://下载完成
 
-                                break;
-                            case Constant.STATUS_COMPLETE://下载完成
+                            break;
+                        default://暂停中
 
-                                break;
-                            default://暂停中
-
-                                break;
-                        }
-                        break;
-                }
+                            break;
+                    }
+                    break;
             }
         }
     };
