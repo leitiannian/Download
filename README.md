@@ -13,7 +13,9 @@ compile 'org.hugh.loader:fileloader:1.1.0'
 > * 可以指定最多几个下载同时执行。
 
 ## 注意
-6.0以上版本需要动态申请文件读写权限
+> * 6.0以上版本需要动态申请文件读写权限
+> * 需要在AndroidManifest.xml文件中注册下载服务 org.hugh.loader.service.LoadService 
+
 
 ## 代码使用
 > 在项目的Application中配置“最多n个下载任务同时执行”，其他的下载任务则在队列之中。
