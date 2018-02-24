@@ -50,3 +50,43 @@ manager.addLoad(url, file);
        .addPause(url4, file4, action3)
        .execute(context);
 ```
+> 广播接收：
+```java
+private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (null != intent && null != intent.getAction()) {
+                switch (intent.getAction()) {
+                    case PIC_ACTION:
+                        LoadFile loadFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
+
+                        int status = loadFile.downloadStatus;//文件的下载状态
+                        long fileSize = loadFile.size;//文件总大小
+                        long loadedSize = loadFile.downloadMark;//已下载了多大
+                        String id = loadFile.id;//数据库中此文件的id
+                        String url = loadFile.downloadUrl;//文件的网络url
+                        String path = loadFile.filePath;//文件下载的手机本地路径
+
+                        switch (status) {
+                            case Constant.STATUS_WAIT://等待下载
+
+                                break;
+                            case Constant.STATUS_PREPARE://正在准备下载
+
+                                break;
+                            case Constant.STATUS_LOADING://正在下载中...
+
+                                break;
+                            case Constant.STATUS_COMPLETE://下载完成
+
+                                break;
+                            default://暂停中
+
+                                break;
+                        }
+                        break;
+                }
+            }
+        }
+    };
+```
