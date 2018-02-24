@@ -57,7 +57,7 @@ private BroadcastReceiver receiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             if (null != intent && null != intent.getAction()) {
                 switch (intent.getAction()) {
-                    case PIC_ACTION:
+                    case LOAD_ACTION:
                         LoadFile loadFile = (LoadFile) intent.getSerializableExtra(Constant.DOWNLOAD_EXTRA);
 
                         int status = loadFile.downloadStatus;//文件的下载状态
