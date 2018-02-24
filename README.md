@@ -1,6 +1,6 @@
 ## 导入项目
 ```gradle
-compile 'org.hugh.loader:fileloader:1.0.3'
+compile 'org.hugh.loader:fileloader:1.1.0'
 ```
 ## 效果图
 ![断点下载的使用效果](https://github.com/hy-freedom/pic/raw/master/Download.gif)
