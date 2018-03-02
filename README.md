@@ -15,11 +15,11 @@ compile 'org.hugh.loader:fileloader:1.1.0'
 
 ## 注意
 * 6.0以上版本需要动态申请文件读写权限
-* 需要在AndroidManifest.xml文件中注册下载服务 org.hugh.loader.service.LoadService 
+* 需要在`AndroidManifest.xml`文件中注册下载服务 `org.hugh.loader.service.LoadService`
 
 
 ## 代码使用
-* 在项目的Application中配置“最多n个下载任务同时执行”，其他的下载任务则在队列之中。
+* 在项目的`Application`中配置“最多n个下载任务同时执行”，其他的下载任务则在队列之中。
 ```java
 public class App extends Application {
     @Override
@@ -29,11 +29,11 @@ public class App extends Application {
     }
 }
 ```
-* 在执行下载之前，先要获取LoadManager实例：
+* 在执行下载之前，先要获取`LoadManager`实例：
 ```java
 LoadManager manager = LoadManager.getInstance();
 ```
-* 添加下载任务(下载任务以“url + file.getAbsolutePath()”作为唯一标识id)：
+* 添加下载任务(下载任务以“`url + file.getAbsolutePath()`”作为唯一标识id)：
 ```java
 manager.addLoad(url, file);//url为下载地址，file为本地下载文件用于接收网络文件
        .addLoad(url2, file2, action);//action为及时接收下载信息的广播action
