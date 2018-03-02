@@ -6,20 +6,20 @@ compile 'org.hugh.loader:fileloader:1.1.0'
 ![断点下载的使用效果](https://github.com/hy-freedom/pic/raw/master/Download.gif)
 
 ## 说明
-> * 代码非常简单。
-> * 主要提供[LoadManager](https://github.com/hy-freedom/Download/blob/master/FileLoaderTest/fileloader/src/main/java/org/hugh/loader/manager/LoadManager.java)给外部管理下载任务。
-> * 支持多任务的断点下载。
-> * 下载过程的信息接收使用广播发送，在执行下载的时候可以指定广播的action（可以在静态注册的广播中接收下载信息并且自己编写Notification在通知栏展示下载进度给用户）。
-> * 可以指定最多几个下载同时执行。
-> * 支持下载排队，当同时下载多个文件时，剩下的下载任务进入“等待下载”状态，等下载中的文件下载完成后会自动进行下载。
+* 代码非常简单。
+* 主要提供[LoadManager](https://github.com/hy-freedom/Download/blob/master/FileLoaderTest/fileloader/src/main/java/org/hugh/loader/manager/LoadManager.java)给外部管理下载任务。
+* 支持多任务的断点下载。
+* 下载过程的信息接收使用广播发送，在执行下载的时候可以指定广播的action（可以在静态注册的广播中接收下载信息并且自己编写Notification在通知栏展示下载进度给用户）。
+* 可以指定最多几个下载同时执行。
+* 支持下载排队，当同时下载多个文件时，剩下的下载任务进入“等待下载”状态，等下载中的文件下载完成后会自动进行下载。
 
 ## 注意
-> * 6.0以上版本需要动态申请文件读写权限
-> * 需要在AndroidManifest.xml文件中注册下载服务 org.hugh.loader.service.LoadService 
+* 6.0以上版本需要动态申请文件读写权限
+* 需要在AndroidManifest.xml文件中注册下载服务 org.hugh.loader.service.LoadService 
 
 
 ## 代码使用
-> 在项目的Application中配置“最多n个下载任务同时执行”，其他的下载任务则在队列之中。
+在项目的Application中配置“最多n个下载任务同时执行”，其他的下载任务则在队列之中。
 ```java
 public class App extends Application {
     @Override
@@ -29,21 +29,21 @@ public class App extends Application {
     }
 }
 ```
-> 在执行下载之前，先要获取LoadManager实例：
+在执行下载之前，先要获取LoadManager实例：
 ```java
 LoadManager manager = LoadManager.getInstance();
 ```
-> 添加下载任务(下载任务以“url + file.getAbsolutePath()”作为唯一标识id)：
+添加下载任务(下载任务以“url + file.getAbsolutePath()”作为唯一标识id)：
 ```java
 manager.addLoad(url, file);//url为下载地址，file为本地下载文件用于接收网络文件
        .addLoad(url2, file2, action);//action为及时接收下载信息的广播action
 ```
-> 添加暂停任务：
+添加暂停任务：
 ```java
 manager.addPause(url, file);//url为下载地址，file为本地下载文件用于接收网络文件
        .addPause(url2, file2, action);//action为及时接收下载信息的广播action
 ```
-> 执行下载任务队列：
+执行下载任务队列：
 ```java
 manager.execute(context);
 ```
